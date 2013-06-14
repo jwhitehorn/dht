@@ -7,6 +7,7 @@ gem 'haml', '~> 3.0.18', :require => ['haml', 'sass']
 gem 'i18n'
 gem 'json'
 gem 'multimap'
+gem 'rake'
 
 # I/O
 gem 'eventmachine', '= 0.12.10'   # must be same as Heroku
@@ -28,8 +29,5 @@ else
     gem 'rspec', '~> 2.0.0.rc'
     gem 'spork'
     gem 'timecop'
-  end
-  group :development do
-    gem 'ruby-debug19', :require => 'ruby-debug'
   end
 end

@@ -1,6 +1,5 @@
 require 'dht/node'
 require 'em/timers'
-require 'ruby-debug'
 
 include DHT
 

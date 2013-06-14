@@ -38,7 +38,7 @@ for peer_url in ARGV
   node.peers.add DHT::Peer.new(peer_url)
 end
 
-Rack::Server.start( :server => 'thin', :Host => url.host, :Port => url.port, :app => Rack::Builder.new  do
+Rack::Server.start(:server => 'thin', :Host => url.host, :Port => url.port, :app => Rack::Builder.new  do
   use Rack::Reloader
   use Rack::FiberPool
   use DHT::PeerServer, node
