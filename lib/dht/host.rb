@@ -52,6 +52,7 @@ class Host
   end
 
 protected
+
   def canonicalize( url )
     url = (Addressable::URI === url) ? url : Addressable::URI.parse(url)
     url.port = nil  if url.port && (url.port == 80)

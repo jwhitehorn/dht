@@ -1,131 +1,46 @@
 require 'set'
-require 'dht/peer_cache'
-require 'dht/host_cache'
-require 'dht/poller'
+require 'celluloid'
+require 'dcell/explorer'
+require 'dht/key'
+require 'dht/storage'
+require 'dht/manager'
+require 'dht/service'
 
 module DHT
+  class Node
+    def initialize(options = {})
+      options = default_options.merge(options)
+      @host = options.delete(:host)
+      @port = options.delete(:port)
+      @name = options.delete(:name)
+      @node = options.delete(:node)
+      @explorer = options.delete(:explorer)
+    end
 
-class Node < Peer
-  attr_reader :peers, :hosts
+    def start
+      DCell.start(configuration)
+      DHT::Service.new(:key => key, :explorer => @explorer).run
+    end
 
-  def initialize( url )
-    super
-    $log.puts "Starting node at #{url}"
-    @peers = PeerCache.new self.key
-    @hosts = HostCache.new self.key
-    @poller = Poller.new(self).start
-    yield self  if block_given?
-  end
+    def configuration
+      configuration = {:id => @name, :addr => "tcp://#{@host}:#{@port}"}
+      configuration.merge!(:directory => @node) if @node
 
-  def key=( key )
-    key = key.kind_of?(Key) ? key : Key.new(key)
-    @key = @peers.key = @hosts.key = key
-  end
+      configuration
+    end
 
-  def inspect
-    self.key.inspect
-  end
+    def key
+      @key ||= Key.for_content("#{@name}:#{@host}:#{@port}")
+    end
 
-  def dump
-    puts "#{key.inspect}:",
-         "Peers: ", peers.inspect,
-         "Hosts: ", hosts.inspect
-  end
+    private
 
-  def bootstrap( peer )
-    @peers.add peer
-    peers_for! self.key
-  end
-
-  # serialization
-  def load( path )
-    return false  unless File.exists?(path)
-    data = JSON.parse File.read(path)
-    @peers.from_hashes data['peers']
-    @hosts.from_hash data['hosts']
-  end
-
-  def save( path )
-    File.open(path, 'w') do |io|
-      io.print JSON.generate({
-        :peers => @peers.to_hashes,
-        :hosts => @hosts.to_hash,
-      }) + "\n"
+    def default_options
+      {
+        :name => "default",
+        :port => 3000,
+        :host => "127.0.0.1"
+      }
     end
   end
-
-  # outgoing peer interface
-  def store!( key, url, redundancy = nil )
-    key = Key.for_content(key.to_s)  unless Key === key
-    redundancy += 1  if redundancy
-    copies = 0
-    peers = peers_for!( key )
-    peers << self  unless peers.include?(self)
-    for peer in peers
-      copies += 1  if peer.store( key, url )
-      break  if redundancy && (copies >= redundancy)
-    end
-    copies
-  end
-
-  def peers_for!( key )
-    find_peers_for!( key ) { |peer|  peer.peers_for( key, self )  }
-  end
-
-  def hosts_for!( key )
-    hosts = Set.new
-    peers = find_peers_for!( key ) do |peer|
-      new_hosts, new_peers = *peer.hosts_for( key, self )
-      hosts |= new_hosts
-      new_peers
-    end
-    hosts.each { |host|  @hosts.add( host, key )  }
-    [ hosts.to_a, peers ]
-  end
-
-  # incoming peer interface
-  # FIND_NODE
-  def peers_for( key, from_peer = nil )
-    @peers.touch from_peer  if from_peer
-    key = Key.new(key)  unless Key === key
-    peers.nearest_to( key )
-  end
-
-  # FIND_VALUE
-  def hosts_for( key, from_peer = nil )
-    @peers.touch from_peer  if from_peer
-    key = Key.new(key)  unless Key === key
-    [ @hosts.by_key[key], peers_for( key ) ]
-  end
-
-  # STORE
-  def store( key, url, from_peer = nil )
-    @peers.touch from_peer  if from_peer
-    key = Key.new(key)  unless Key === key
-    @hosts.touch Host.new(url), key
-  end
-
-protected
-  def find_peers_for!( key, &peers_for )
-    key = Key.new(key)  unless Key === key
-    tried = Set.new [self]
-    peers = peers_for.call self
-    until peers.empty?
-      peer = peers.shift
-
-      new_peers = peers_for.call peer
-      self.peers.touch peer
-      tried.add peer
-
-      new_peers.map! { |p|  self.peers.add(p) }
-      new_peers.reject! { |p|  p.blank? || tried.include?(p)  }
-
-      peers += new_peers
-      peers.uniq!
-      peers = peers.sort_by &:distance
-    end
-    tried.to_a
-  end
-end
-
 end
