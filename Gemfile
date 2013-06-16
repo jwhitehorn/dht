@@ -5,4 +5,5 @@ gemspec
 gem 'dcell', :path => "../dcell"
 gem 'rake'
 gem 'rspec'
+gem 'bogus'
 

@@ -10,6 +10,7 @@ module DHT
   class Node
     def initialize(options = {})
       options = default_options.merge(options)
+
       @host = options.delete(:host)
       @port = options.delete(:port)
       @name = options.delete(:name)

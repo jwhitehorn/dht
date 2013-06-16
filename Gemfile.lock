@@ -16,6 +16,8 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    bogus (0.1.0)
+      dependor (>= 0.0.4)
     celluloid (0.14.1)
       timers (>= 1.0.0)
     celluloid-io (0.14.1)
@@ -26,6 +28,7 @@ GEM
       ffi
       ffi-rzmq
     certified (0.1.1)
+    dependor (0.0.6)
     diff-lcs (1.2.4)
     ffi (1.9.0)
     ffi-rzmq (1.0.1)
@@ -62,6 +65,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bogus
   dcell!
   dht!
   rake
