@@ -66,7 +66,7 @@ module DHT
         stub(subject).node_for(:key) { node }
         stub(storage).[](:key) { nil }
 
-        subject.get(:key).should == "There is no such key (#{:key})"
+        subject.get(:key).should == nil
       end
 
       it "get key from other node" do

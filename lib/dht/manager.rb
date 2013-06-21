@@ -24,7 +24,7 @@ module DHT
       if value = me[:storage][key]
         value
       elsif closest_node == me
-        "There is no such key (#{key})"
+        nil
       else
         closest_node[:manager].get(key)
       end
@@ -41,7 +41,7 @@ module DHT
     end
 
     def nodes
-      @nodes ||= find_nodes
+      @nodes = find_nodes
     end
 
     def dcell_nodes
