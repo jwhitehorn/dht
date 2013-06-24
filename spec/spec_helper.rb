@@ -1,5 +1,8 @@
 $LOAD_PATH << File.dirname(__FILE__) + '/..'
 
+require 'coveralls'
+Coveralls.wear!
+
 require 'rspec'
 require 'bogus/rspec'
 require 'bbq/spawn'

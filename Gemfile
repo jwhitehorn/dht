@@ -7,3 +7,4 @@ gem 'rake'
 gem 'rspec'
 gem 'bogus'
 gem 'bbq-spawn', :github => 'mlen/bbq-spawn'
+gem 'coveralls', require: false
