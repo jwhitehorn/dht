@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.summary = "Ruby DHT P2P network"
   s.description = "Implementation of the Kademlia Distributed Hash Table (DHT) in Ruby"
 
-  s.files = Dir.glob('{bin,lib,server}/**/*') + %w(README.rdoc)
+  s.files = Dir.glob('{bin,lib,server}/**/*') + %w(README.md)
   s.bindir = %w(bin)
   s.require_paths = %w(lib)
 end
