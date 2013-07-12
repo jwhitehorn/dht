@@ -2,9 +2,9 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'dcell', :path => "../dcell"
+gem 'dcell'
 gem 'rake'
 gem 'rspec'
 gem 'bogus'
-gem 'bbq-spawn', :github => 'mlen/bbq-spawn'
+gem 'bbq-spawn'
 gem 'coveralls', require: false

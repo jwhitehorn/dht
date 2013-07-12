@@ -9,12 +9,14 @@ module DHT
     fake(:storage,  :key => Key.for_content("node"))
     fake(:storage2, :key => Key.for_content("node2")) { Storage }
     fake(:manager)
+    fake(:manager2) { Manager }
 
     before do
       stub(storage).key         { key }
       stub(node).[](:storage)   { storage }
       stub(node2).[](:storage)  { storage2 }
       stub(node2).[](:manager)  { manager }
+      stub(node2).[](:manager)  { manager2 }
       stub(subject).me          { node }
       stub(subject).dcell_nodes { [node] }
     end
@@ -40,15 +42,14 @@ module DHT
 
     describe "#store" do
       it "store key in current node" do
-        stub(subject).node_for(:key) { node }
-        stub(storage).store(:key, :value) { :value }
+        mock(subject).node_for(:key) { node }
+        mock(storage).store(:key, :value) { :value }
 
         subject.store(:key, :value).should == :value
       end
 
       it "try store key in another node" do
-        stub(subject).node_for(:key) { node2 }
-        stub(manager).store(:key, :value) { :value }
+        mock(subject).store(:key, :value) { :value }
 
         subject.store(:key, :value).should == :value
       end
@@ -56,30 +57,30 @@ module DHT
 
     describe "#get" do
       it "get key from current node" do
-        stub(subject).node_for(:key) { node }
-        stub(storage).[](:key) { :value }
+        mock(subject).node_for(:key) { node }
+        mock(storage).[](:key) { :value }
 
         subject.get(:key).should == :value
       end
 
       it "cannot find key on closets node" do
-        stub(subject).node_for(:key) { node }
-        stub(storage).[](:key) { nil }
+        mock(subject).node_for(:key) { node }
+        mock(storage).[](:key) { nil }
 
         subject.get(:key).should == nil
       end
 
       it "get key from other node" do
-        stub(subject).node_for(:key) { node2 }
-        stub(storage).[](:key) { nil }
-        stub(manager).get(:key) { :value }
+        mock(subject).node_for(:key) { node2 }
+        mock(storage).[](:key) { nil }
+        mock(manager2).get(:key) { :value }
 
         subject.get(:key).should == :value
       end
     end
 
     describe "#node_for" do
-      before { stub(subject).dcell_nodes { [node, node2] } }
+      before { mock(subject).dcell_nodes { [node, node2] } }
 
       it "find closets node for :key" do
         subject.node_for(:key).should == node
