@@ -1,18 +1,21 @@
-Gem::Specification.new do |s|
-  s.required_rubygems_version = ">= 1.3.6"
+# -*- encoding: utf-8 -*-
+require File.expand_path('../lib/dht/version', __FILE__)
 
-  s.name = %q{dht}
-  s.version = '0.0.3'
-  s.date = %q{2010-03-06}
+Gem::Specification.new do |gem|
+  gem.authors       = ["Piotr Niełacny"]
+  gem.email         = ["piotr.nielacny@gmail.com"]
+  gem.description   = %q{Ruby DHT hash}
+  gem.summary       = %q{Implementation of the Distributed Hash Table (DHT) in Ruby}
+  gem.homepage      = "https://github.com/LTe/dht"
 
-  s.authors = ['Steve Sloan']
-  s.email = ['steve@finagle.org']
-  s.homepage = 'http://github.com/CodeMonkeySteve/dht'
-  s.summary = "Ruby DHT P2P network"
-  s.description = "Implementation of the Kademlia Distributed Hash Table (DHT) in Ruby"
+  gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  gem.files         = `git ls-files`.split("\n")
+  gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  gem.name          = "dht"
+  gem.require_paths = ["lib"]
+  gem.version       = DHT::Hash::VERSION
+  gem.required_ruby_version = '>= 1.9.3'
 
-  s.files = Dir.glob('{bin,lib,server}/**/*') + %w(README.md)
-  s.bindir = %w(bin)
-  s.require_paths = %w(lib)
+  gem.add_dependency "dcell"
 end
 

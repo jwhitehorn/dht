@@ -1,7 +1,8 @@
 PATH
   remote: .
   specs:
-    dht (0.0.3)
+    dht (0.0.1)
+      dcell
 
 GEM
   remote: https://rubygems.org/
@@ -84,7 +85,6 @@ DEPENDENCIES
   bbq-spawn
   bogus
   coveralls
-  dcell
   dht!
   rake
   rspec
