@@ -1,3 +1,5 @@
+require 'dht/explorer'
+
 module DHT
   class Service
     def initialize(options = {})
@@ -16,7 +18,7 @@ module DHT
     end
 
     def create_explorer
-      DCell::Explorer.new("127.0.0.1", 8000)
+      DHT::Explorer.new("127.0.0.1", 8000)
     end
 
     def create_storage
