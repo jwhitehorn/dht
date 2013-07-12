@@ -1,10 +1,12 @@
+# encoding: utf-8
+
 require 'spec_helper'
 require 'dht/key'
 
 module DHT
   describe Key do
     before do
-      @key = Key.new "\v\xEE\xC7\xB5\xEA?\x0F\xDB\xC9]\r\xD4\x7F<[\xC2u\xDA\x000"
+      @key = Key.new "\v\xEE\xC7\xB5\xEA?\x0F\xDB\xC9]\r\xD4\x7F<[\xC2u\xDA\x000".force_encoding('binary')
     end
 
     it 'initializes from a hex String' do
