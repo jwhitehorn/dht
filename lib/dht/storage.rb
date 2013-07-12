@@ -15,8 +15,12 @@ module DHT
       @database[key] = value
     end
 
-    def [](key)
+    def get(key)
       @database[key]
+    end
+
+    def [](key)
+      get(key)
     end
 
     def []=(key, value)

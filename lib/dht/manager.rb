@@ -8,25 +8,13 @@ module DHT
       dcell_nodes.inject({}) { |hash, node| hash[node[:storage].key] = node; hash }
     end
 
-    def store(key, value)
+    def storage_for(key)
       closest_node = node_for(key)
 
       if closest_node == me
-        me[:storage].store(key, value)
+        me[:storage]
       else
-        closest_node[:manager].store(key, value)
-      end
-    end
-
-    def get(key)
-      closest_node = node_for(key)
-
-      if value = me[:storage][key]
-        value
-      elsif closest_node == me
-        nil
-      else
-        closest_node[:manager].get(key)
+        closest_node[:manager].storage_for(key)
       end
     end
 

@@ -14,8 +14,8 @@ module DHT
     before do
       stub(storage).key         { key }
       stub(node).[](:storage)   { storage }
+      stub(node).[](:manager)   { manager }
       stub(node2).[](:storage)  { storage2 }
-      stub(node2).[](:manager)  { manager }
       stub(node2).[](:manager)  { manager2 }
       stub(subject).me          { node }
       stub(subject).dcell_nodes { [node] }
@@ -40,42 +40,18 @@ module DHT
       end
     end
 
-    describe "#store" do
-      it "store key in current node" do
+    describe "#storage_for" do
+      it "returns current node" do
         mock(subject).node_for(:key) { node }
-        mock(storage).store(:key, :value) { :value }
 
-        subject.store(:key, :value).should == :value
+        subject.storage_for(:key).should == storage
       end
 
-      it "try store key in another node" do
-        mock(subject).store(:key, :value) { :value }
-
-        subject.store(:key, :value).should == :value
-      end
-    end
-
-    describe "#get" do
-      it "get key from current node" do
-        mock(subject).node_for(:key) { node }
-        mock(storage).[](:key) { :value }
-
-        subject.get(:key).should == :value
-      end
-
-      it "cannot find key on closets node" do
-        mock(subject).node_for(:key) { node }
-        mock(storage).[](:key) { nil }
-
-        subject.get(:key).should == nil
-      end
-
-      it "get key from other node" do
+      it "returns another node another node" do
         mock(subject).node_for(:key) { node2 }
-        mock(storage).[](:key) { nil }
-        mock(manager2).get(:key) { :value }
+        mock(manager2).storage_for(:key) { storage2 }
 
-        subject.get(:key).should == :value
+        subject.storage_for(:key).should == storage2
       end
     end
 

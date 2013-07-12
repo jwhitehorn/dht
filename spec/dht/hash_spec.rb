@@ -4,14 +4,14 @@ module DHT
   describe Hash do
     fake(:manager)
     fake(:storage)
+    fake(:storage2) { Storage }
     fake(:dcell_node) { DCell::Node }
 
     before do
       fake_class(DHT::Node, :new => dcell_node)
       stub(dcell_node).[](:storage) { storage }
       stub(dcell_node).[](:manager) { manager }
-      stub(manager).store(any_args, :value) { :value }
-      stub(manager).get(:key) { :value }
+      stub(manager).storage_for(:key) { storage }
       stub(subject).me { dcell_node }
     end
 
@@ -34,16 +34,39 @@ module DHT
     end
 
     describe "#[]=" do
-      it "ask manager to store value" do
-        (subject[:key] = :value).should == :value
-        manager.shold have_received.store(:key, :value) { :value }
+      it "store value in storage" do
+        mock(storage).store(:key, :value)  { :value }
+        subject.store(:key, :value).should == :value
+      end
+
+      it "store key in another node" do
+        mock(manager).storage_for(:key) { storage2 }
+        mock(storage2).store(:key, :value) { :value }
+
+        subject.store(:key, :value).should == :value
       end
     end
 
     describe "#[]" do
-      it "ask manager to get value for key" do
+      it "gets key from current node" do
+        mock(storage).get(:key) { :value }
+        mock(manager).storage_for(:key) { storage }
+
         subject[:key].should == :value
-        manager.should have_received.get(:key) { :value }
+      end
+
+      it "cannot find key on closets node" do
+        mock(storage).get(:key) { nil }
+        mock(manager).storage_for(:key) { storage }
+
+        subject[:key].should == nil
+      end
+
+      it "get key from other node" do
+        mock(manager).storage_for(:key) { storage2 }
+        mock(storage2).get(:key) { :value }
+
+        subject[:key].should == :value
       end
     end
   end

@@ -21,12 +21,20 @@ module DHT
       me[:manager]
     end
 
+    def store(key, value)
+      manager.storage_for(key).store(key, value)
+    end
+
+    def get(key)
+      manager.storage_for(key).get(key)
+    end
+
     def []=(key, value)
-      manager.store(key, value)
+      store(key, value)
     end
 
     def [](key)
-      manager.get(key)
+      get(key)
     end
   end
 end
