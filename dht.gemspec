@@ -15,6 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = DHT::Hash::VERSION
   gem.required_ruby_version = '>= 1.9.3'
+  gem.license       = 'MIT'
 
   gem.add_dependency "dcell"
 end
