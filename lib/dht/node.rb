@@ -20,7 +20,8 @@ module DHT
 
     def start
       DCell.start(configuration)
-      DHT::Service.new(:key => key, :explorer => @explorer).run
+      @service = DHT::Service.new(:key => key, :explorer => @explorer)
+      @service.run
     end
 
     def configuration
